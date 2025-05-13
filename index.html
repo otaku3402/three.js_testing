@@ -3,13 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <title>Three.js Basic Example</title>
-    <style>
-        body { margin: 0; }
-        canvas { display: block; }
-    </style>
 </head>
 <body>
-    <canvas id="canvas"></canvas>
-    <script src="js/index.js"></script>
+    <canvas id="canvas" width="300" height="300"></canvas>
+    
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.141.0/build/three.module.js",
+                "GLTFLoader" : "https://unpkg.com/three@0.141.0/examples/jsm/loaders/GLTFLoader.js"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import {GLTFLoader} from 'GLTFLoader';
+        import * as THREE from 'three';
+
+        let scene = new THREE.Scene();
+        let renderer = new THREE.WebGLRenderer({
+            canvas : doucument.querySelector('#canvas'),
+            antialias : true
+        });
+        renderer.outputEncoding = THREE.sRGBEncoding;
+
+        let camera = new THREE.perspectiveCamera(30, 1);
+        camera.position.set(0,0,5);
+
+        scene.background = new THREE.Color('white');
+        let light = new THREE.DirectionalLight(0xffff00, 10);
+        scene.add(light);
+
+        let loader = new GLTFLoader();
+        loader.load('model/scene.gltf', function(gltf){
+            scene.add(gltf.scene);
+            
+            function animate(){
+                requestAnimationFrame(animate)
+                gltf.scene.rotation.y += 0.001
+                renderer.render(scene, camera);
+            }
+            animate()
+        });    
+    </script>
 </body>
 </html>
