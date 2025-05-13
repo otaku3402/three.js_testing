@@ -6,7 +6,7 @@
 </head>
 <body>
     <canvas id="canvas" width="300" height="300"></canvas>
-    
+
     <script type="importmap">
         {
             "imports": {
@@ -21,30 +21,32 @@
         import * as THREE from 'three';
 
         let scene = new THREE.Scene();
+        let canvas = document.querySelector('#canvas');
         let renderer = new THREE.WebGLRenderer({
-            canvas : document.querySelector('#canvas'),
+            canvas : canvas,
             antialias : true
         });
         renderer.outputEncoding = THREE.sRGBEncoding;
+        renderer.setSize(canvas.clientWidth, canvas.clientHeight); // 렌더러 사이즈 설정
 
         let camera = new THREE.PerspectiveCamera(30, canvas.clientWidth / canvas.clientHeight, 0.1, 1000); // 종횡비 수정
         camera.position.set(0,0,5);
 
         scene.background = new THREE.Color('white');
-        let light = new THREE.DirectionalLight(0xffff00, 10);
+        let light = new THREE.DirectionalLight(0xB1E1FF, 10);
         scene.add(light);
-
+        
         let loader = new GLTFLoader();
         loader.load('model/scene.gltf', function(gltf){
             scene.add(gltf.scene);
-            
+
             function animate(){
                 requestAnimationFrame(animate)
-                gltf.scene.rotation.y += 0.001
+                gltf.scene.rotation.y += 0.05
                 renderer.render(scene, camera);
             }
             animate()
-        });    
+        });
     </script>
 </body>
 </html>
