@@ -30,19 +30,42 @@
         renderer.setSize(canvas.clientWidth, canvas.clientHeight); // 렌더러 사이즈 설정
 
         let camera = new THREE.PerspectiveCamera(30, canvas.clientWidth / canvas.clientHeight, 0.1, 1000); // 종횡비 수정
-        camera.position.set(0,0,5);
+        camera.position.set(0,0,6); // 카메라 위치 설정
 
         scene.background = new THREE.Color('white');
-        let light = new THREE.DirectionalLight(0xB1E1FF, 10);
+        let light = new THREE.DirectionalLight(0xB1E1FF, 10); // 빛의 색상과 세기 설정
         scene.add(light);
         
         let loader = new GLTFLoader();
         loader.load('model/scene.gltf', function(gltf){
             scene.add(gltf.scene);
 
+            let rotating = false;
+            let rotationSpeed = 0.05;
+            let speedInterval = null;
+
+            canvas.addEventListener('click', () => {
+                rotating = !rotating; // 클릭할 때마다 회전 상태 토글
+
+                if (rotating) {
+                    // 회전 시작 시 속도 증가 타이머 시작
+                    rotationSpeed = 0.05;
+                    speedInterval = setInterval(() => {
+                        rotationSpeed += 0.02; // 1초마다 속도 증가
+                    }, 1000);
+                } else {
+                    // 회전 멈출 때 타이머 해제 및 위치 리셋
+                    clearInterval(speedInterval);
+                    gltf.scene.rotation.y = 0; // 위치 리셋
+                }
+            });
+            // 애니메이션 루프
+            
             function animate(){
                 requestAnimationFrame(animate)
-                gltf.scene.rotation.y += 0.05
+                if (rotating) {
+                    gltf.scene.rotation.y += rotationSpeed;
+                }
                 renderer.render(scene, camera);
             }
             animate()
